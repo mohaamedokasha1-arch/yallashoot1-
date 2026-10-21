@@ -1,0 +1,40 @@
+import { Newspaper } from "lucide-react";
+import type { Metadata } from "next";
+import { CategoryNav, ArticleList, HeadlineList } from "@/components/news/NewsLists";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { qPublishedArticles } from "@/lib/content/articles";
+import { qHeadlines } from "@/lib/content/feeds";
+import { pageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = pageMetadata({
+  title: "أخبار الكرة المصرية والعالمية",
+  description: "مقالات وتحليلات من فريق تحرير يلا شوت، وعناوين من مصادر إخبارية مرخّصة مع رابط المصدر الأصلي، مع التركيز على الكرة المصرية.",
+  path: "/news",
+});
+
+export default async function NewsPage() {
+  const [articles, headlines] = await Promise.all([qPublishedArticles(), qHeadlines()]);
+  return (
+    <>
+      <Breadcrumbs items={[{ name: "الأخبار", path: "/news" }]} />
+      <section className="ys-block" aria-labelledby="news-title">
+        <div className="ys-block-head">
+          <h1 id="news-title" className="ys-pill ys-pill--main">
+            الأخبار
+          </h1>
+          <CategoryNav />
+        </div>
+        {!articles.length && !headlines.length ? (
+          <EmptyState icon={Newspaper} title="لا توجد أخبار منشورة حاليًا">
+            ينشر فريق التحرير المقالات من لوحة الإدارة، ويمكن إضافة مصادر أخبار مرخّصة (عناوين وروابط فقط). لا ننسخ مقالات من مواقع أخرى.
+          </EmptyState>
+        ) : (
+          <p className="ys-block-body text-sm text-slate-600">مقالات فريق التحرير أولًا، ثم عناوين من مصادر مرخّصة مع رابط المصدر الأصلي.</p>
+        )}
+      </section>
+      {articles.length ? <ArticleList articles={articles} /> : null}
+      {headlines.length ? <HeadlineList items={headlines} /> : null}
+    </>
+  );
+}

@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/* `night:` variant for the optional dark ("الوضع الليلي") skin toggled from the header. */
+@custom-variant night (&:where(.night, .night *));
+
+@theme {
+  --font-sans: var(--font-kufi-ar), var(--font-kufi-latin), "Segoe UI", Tahoma, system-ui, sans-serif;
+
+  /* Accent scale (maroon #931800 = the site's main color). Kept under the
+   * historical `pitch-*` name so existing utilities pick up the new brand. */
+  --color-pitch-50: #fbefec;
+  --color-pitch-100: #f6dbd4;
+  --color-pitch-200: #ecb5a8;
+  --color-pitch-300: #df8a76;
+  --color-pitch-400: #cc5a40;
+  --color-pitch-500: #b33a1d;
+  --color-pitch-600: #a32508;
+  --color-pitch-700: #931800;
+  --color-pitch-800: #7d1400;
+  --color-pitch-900: #5f0f00;
+  --color-ink: #222222;
+}
+
+/* Semantic colors bound to the theme variables (they switch with the night skin). */
+@theme inline {
+  --color-main: var(--ys-main);
+  --color-surface: var(--ys-light);
+  --color-muted: var(--ys-gray1);
+  --color-line: var(--ys-gray2);
+  --color-dark: var(--ys-dark);
+  --color-body: var(--ys-body);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 1rem;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--ys-body);
+    color: var(--ys-text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Like the reference design: the web font on desktop, the system font on phones. */
+  @media (max-width: 768px) {
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+  }
+
+  a {
+    color: var(--ys-link);
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--ys-main);
+  }
+
+  html.night a:hover,
+  html.night a:focus-visible {
+    color: #ff8800;
+  }
+
+  :focus-visible {
+    outline: 3px solid #f5a524;
+    outline-offset: 2px;
+  }
+
+  /* Latin numbers and names inside Arabic text keep their own direction. */
+  .ltr-nums {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  /* Night skin: invert the neutral scale used by utilities across the app. */
+  html.night {
+    --color-slate-50: #1c2733;
+    --color-slate-100: #22303e;
+    --color-slate-200: #2b3b4d;
+    --color-slate-300: #3a4c60;
+    --color-slate-400: #8391a1;
+    --color-slate-500: #a3adb9;
+    --color-slate-600: #c3cad3;
+    --color-slate-700: #dde2e8;
+    --color-slate-800: #eef1f4;
+    --color-slate-900: #ffffff;
+    --color-slate-950: #ffffff;
+    --color-pitch-50: #3a2622;
+    --color-pitch-100: #4a2c25;
+    --color-pitch-600: #ff9a55;
+    --color-pitch-700: #ff8800;
+    --color-amber-50: #3a3122;
+    --color-amber-100: #4a3c20;
+    --color-amber-800: #fcd34d;
+    --color-amber-900: #fde68a;
+    --color-amber-950: #fef3c7;
+    --color-emerald-50: #183a2c;
+    --color-emerald-800: #a7f3d0;
+    --color-rose-50: #3d2026;
+    --color-rose-100: #4d232b;
+    --color-rose-800: #fecdd3;
+    --color-rose-950: #ffe4e6;
+    --color-sky-50: #1b3346;
+    --color-sky-950: #e0f2fe;
+    --color-violet-50: #2c2442;
+    --color-violet-950: #ede9fe;
+  }
+}
+
+/*
+ * Match status filters (الكل / مباشر / قادمة / منتهية) work without
+ * JavaScript: radio inputs + :has() hide cards that do not match.
+ */
+.match-board:has(.flt[value="live"]:checked) .match-row:not([data-group="live"]),
+.match-board:has(.flt[value="upcoming"]:checked) .match-row:not([data-group="upcoming"]),
+.match-board:has(.flt[value="finished"]:checked) .match-row:not([data-group="finished"]) {
+  display: none;
+}
+
+.match-board:has(.flt[value="live"]:checked) .league-block:not(:has(.match-row[data-group="live"])),
+.match-board:has(.flt[value="upcoming"]:checked) .league-block:not(:has(.match-row[data-group="upcoming"])),
+.match-board:has(.flt[value="finished"]:checked) .league-block:not(:has(.match-row[data-group="finished"])),
+.match-board:has(.flt[value="live"]:checked) .region-block:not(:has(.match-row[data-group="live"])),
+.match-board:has(.flt[value="upcoming"]:checked) .region-block:not(:has(.match-row[data-group="upcoming"])),
+.match-board:has(.flt[value="finished"]:checked) .region-block:not(:has(.match-row[data-group="finished"])) {
+  display: none;
+}
+
+.filter-empty {
+  display: none;
+}
+
+.match-board:has(.flt[value="live"]:checked):not(:has(.match-row[data-group="live"])) .filter-empty[data-for="live"],
+.match-board:has(.flt[value="upcoming"]:checked):not(:has(.match-row[data-group="upcoming"])) .filter-empty[data-for="upcoming"],
+.match-board:has(.flt[value="finished"]:checked):not(:has(.match-row[data-group="finished"])) .filter-empty[data-for="finished"] {
+  display: block;
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] > summary .chevron {
+  transform: rotate(180deg);
+}
