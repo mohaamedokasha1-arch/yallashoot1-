@@ -15,6 +15,8 @@ export interface RequestLogEntry {
   ok: boolean;
   ms: number;
   errorKind?: string;
+  /** Provider-side detail for failures (e.g. "HTTP 401"). Never contains secrets. */
+  errorDetail?: string;
   dailyRemaining?: number | null;
   minuteRemaining?: number | null;
   results?: number | null;
@@ -54,7 +56,12 @@ export async function recordProviderRequest(entry: RequestLogEntry): Promise<voi
       store.incr(`mon:count:${day}:${entry.ok ? "ok" : "error"}`, 8 * 86400),
       entry.ok
         ? store.set(LAST_SUCCESS_KEY, { at: entry.at, endpoint: entry.endpoint })
-        : store.set(LAST_ERROR_KEY, { at: entry.at, endpoint: entry.endpoint, kind: entry.errorKind ?? "unknown" }),
+        : store.set(LAST_ERROR_KEY, {
+            at: entry.at,
+            endpoint: entry.endpoint,
+            kind: entry.errorKind ?? "unknown",
+            detail: entry.errorDetail ?? null,
+          }),
     ]);
   } catch (err) {
     console.warn("[monitoring] failed to record request", err instanceof Error ? err.message : err);
@@ -90,7 +97,7 @@ export interface MonitoringSnapshot {
   requests: RequestLogEntry[];
   errors: ErrorLogEntry[];
   lastSuccess: { at: string; endpoint: string } | null;
-  lastError: { at: string; endpoint: string; kind: string } | null;
+  lastError: { at: string; endpoint: string; kind: string; detail?: string | null } | null;
   lastCron: CronRunEntry | null;
   cronHistory: CronRunEntry[];
   dailyCounts: Array<{ day: string; ok: number; error: number }>;
@@ -104,7 +111,7 @@ export async function getMonitoringSnapshot(): Promise<MonitoringSnapshot> {
       store.list<RequestLogEntry>(REQUESTS_KEY, 60),
       store.list<ErrorLogEntry>(ERRORS_KEY, 60),
       store.get<{ at: string; endpoint: string }>(LAST_SUCCESS_KEY),
-      store.get<{ at: string; endpoint: string; kind: string }>(LAST_ERROR_KEY),
+      store.get<{ at: string; endpoint: string; kind: string; detail?: string | null }>(LAST_ERROR_KEY),
       store.get<CronRunEntry>(CRON_KEY),
       store.list<CronRunEntry>(`${CRON_KEY}:history`, 10),
       ...days.flatMap((day) => [

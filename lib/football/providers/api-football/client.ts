@@ -165,6 +165,7 @@ export async function apiFootballGet(endpoint: Endpoint, params: Record<string, 
         ok: false,
         ms: Math.round(performance.now() - started),
         errorKind: error.kind,
+        errorDetail: error.message.slice(0, 200),
       });
       if (error.retryable && attempt < maxAttempts) {
         await sleep(300 + Math.floor(Math.random() * 500));

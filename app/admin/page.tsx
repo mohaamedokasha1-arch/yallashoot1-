@@ -6,6 +6,7 @@ import { Notice } from "@/components/ui/Notice";
 import { requireSession } from "@/lib/admin/session";
 import { footballConfig } from "@/lib/env";
 import { getQuotaState, quotaFlags } from "@/lib/football/budget";
+import { apiKeyFormatIssue } from "@/lib/football/key-format";
 import { getMonitoringSnapshot } from "@/lib/monitoring";
 import { contentWritesAllowed, getStore } from "@/lib/store";
 import { formatCairoDateTime } from "@/lib/utils/format";
@@ -34,6 +35,8 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
     store.get<{ plan: string | null; active: boolean | null; requestsToday: number | null; dailyLimit: number | null; subscriptionEnd: string | null; checkedAt: string }>("provider:account"),
   ]);
   const { circuitOpen, blocked } = quotaFlags(quota);
+  const keyIssue = apiKeyFormatIssue(cfg.apiKey);
+  const lastAuthError = mon.lastError?.kind === "auth" ? mon.lastError : null;
 
   return (
     <AdminShell session={session} active="/admin" title="لوحة المتابعة">
@@ -41,6 +44,18 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
       {!cfg.apiKey ? (
         <Notice variant="error" title="مزود البيانات غير مربوط">
           أضف FOOTBALL_API_KEY في متغيرات البيئة ثم أعد النشر. حتى ذلك الحين تعرض الصفحات رسالة «مصدر البيانات غير مربوط».
+        </Notice>
+      ) : null}
+      {keyIssue ? (
+        <Notice variant="error" title="شكل مفتاح مزود البيانات غير صحيح">
+          {keyIssue}
+        </Notice>
+      ) : null}
+      {lastAuthError ? (
+        <Notice variant="error" title="مزود البيانات يرفض مفتاح API">
+          آخر خطأ مسجّل: <span dir="ltr">{lastAuthError.detail ?? "HTTP 401/403"}</span> — أي أن المفتاح وصل للمزود لكنه مرفوض.
+          تأكد أنه من <span dir="ltr">dashboard.api-football.com</span> (وليس من RapidAPI)، ومنسوخ بدون مسافات، وأن الحساب مفعّل،
+          ثم صحّح <span dir="ltr">FOOTBALL_API_KEY</span> في متغيرات بيئة Vercel واعمل <strong>Redeploy</strong>.
         </Notice>
       ) : null}
       {cfg.baseUrlError ? <Notice variant="error">{cfg.baseUrlError}</Notice> : null}
