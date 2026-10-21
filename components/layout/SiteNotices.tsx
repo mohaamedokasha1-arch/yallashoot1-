@@ -2,14 +2,19 @@ import { FlaskConical, Megaphone } from "lucide-react";
 import { qSettings } from "@/lib/admin/settings";
 import { footballConfig } from "@/lib/env";
 
-/** Shown when the provider base URL is not the official API (mock/test server). */
-export function TestDataBanner() {
+/**
+ * Data-protection notice: shown only while the provider base URL points at
+ * something other than the official API (a local sample server used to review
+ * the design). With the real provider configured it never renders, so the live
+ * site carries no such notice.
+ */
+export function SampleDataNotice() {
   const cfg = footballConfig();
   if (cfg.isOfficial || !cfg.apiKey) return null;
   return (
     <div role="status" className="ys-msg ys-msg--test">
       <FlaskConical aria-hidden="true" />
-      <p className="ys-msg-title">بيئة اختبار: البيانات المعروضة مصدرها خادم محاكاة وليست مباريات أو نتائج حقيقية.</p>
+      <p className="ys-msg-title">المباريات والنتائج المعروضة هنا أمثلة توضيحية للتصميم، وليست مباريات حقيقية.</p>
     </div>
   );
 }

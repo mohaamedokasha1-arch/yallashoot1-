@@ -330,7 +330,7 @@ export interface DataResult<T> {
   stale: boolean;
   source: "provider" | "cache" | "fallback" | "none";
   error: DataError | null;
-  /** True when the provider base URL is not the official one (tests/mock). */
+  /** True when the provider base URL is not the official one (sample data server). */
   testData: boolean;
 }
 

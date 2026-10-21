@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { XMLParser } from "fast-xml-parser";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
+import { BUILTIN_FEEDS, BUILTIN_FEED_IDS, type FeedTopic } from "@/data/news-feeds";
 import { newsAllowedHosts } from "@/lib/env";
 import { recordError } from "@/lib/monitoring";
 import { getStore } from "@/lib/store";
@@ -10,9 +11,11 @@ import { safeHref } from "./markup";
 import { safeFetchText, validatePublicUrl } from "./safe-fetch";
 
 /**
- * Licensed/permitted news feeds (RSS/Atom). Only headlines, dates and links to
- * the original article are shown — never the article body or images.
- * The admin is responsible for confirming each source permits this use.
+ * News feeds (RSS/Atom): the free sources shipped in `data/news-feeds.ts` plus
+ * any source the admin adds. Only headlines, dates and links to the original
+ * article are shown — never the article body or images.
+ * Built-in sources can be disabled from the admin panel but not edited, so the
+ * catalogue in git stays the record of what is fetched and why it is allowed.
  */
 
 export const feedInputSchema = z.object({
@@ -29,6 +32,11 @@ export interface FeedSource extends FeedInput {
   id: string;
   addedAt: string;
   addedBy: string;
+  /** Defined in `data/news-feeds.ts`: disabled instead of deleted. */
+  builtin?: boolean;
+  topic?: FeedTopic;
+  section?: string;
+  limit?: number;
 }
 
 export interface FeedItem {
@@ -47,9 +55,29 @@ interface FeedCache {
 }
 
 const FEEDS_KEY = "content:feeds";
+const FEED_OVERRIDES_KEY = "content:feed-overrides";
 const FEED_TTL_MS = 30 * 60_000;
 
-export async function listFeeds(): Promise<FeedSource[]> {
+interface FeedOverride {
+  enabled: boolean;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+async function readOverrides(): Promise<Record<string, FeedOverride>> {
+  try {
+    const raw = await getStore().get<Record<string, FeedOverride>>(FEED_OVERRIDES_KEY);
+    return raw && typeof raw === "object" ? raw : {};
+  } catch {
+    return {};
+  }
+}
+
+async function writeOverrides(overrides: Record<string, FeedOverride>): Promise<void> {
+  await getStore().set(FEED_OVERRIDES_KEY, overrides);
+}
+
+async function listCustomFeeds(): Promise<FeedSource[]> {
   try {
     return Object.values(await getStore().hgetall<FeedSource>(FEEDS_KEY))
       .filter((f) => f && typeof f.id === "string")
@@ -59,10 +87,39 @@ export async function listFeeds(): Promise<FeedSource[]> {
   }
 }
 
+/** Built-in free sources (catalogue order) followed by admin-added sources. */
+export async function listFeeds(): Promise<FeedSource[]> {
+  const overrides = await readOverrides();
+  const builtin: FeedSource[] = BUILTIN_FEEDS.map((f) => ({
+    id: f.id,
+    name: f.name,
+    url: f.url,
+    homepage: f.homepage,
+    permissionNote: f.permissionNote,
+    enabled: overrides[f.id]?.enabled ?? true,
+    addedAt: "",
+    addedBy: "المصادر المضمّنة",
+    builtin: true,
+    topic: f.topic,
+    section: f.section,
+    limit: f.limit,
+  }));
+  return [...builtin, ...(await listCustomFeeds()).filter((f) => !BUILTIN_FEED_IDS.has(f.id))];
+}
+
+/** Enables/disables a source. Built-in sources are kept in the catalogue. */
+export async function setFeedEnabled(id: string, enabled: boolean, user: string): Promise<void> {
+  const overrides = await readOverrides();
+  overrides[id] = { enabled, updatedAt: new Date().toISOString(), updatedBy: user };
+  await writeOverrides(overrides);
+  await getStore().del(`feed:items:${id}`);
+}
+
 export async function saveFeed(input: FeedInput, user: string, id?: string): Promise<FeedSource> {
   validatePublicUrl(input.url, newsAllowedHosts());
   if (input.homepage && !safeHref(input.homepage)) throw new Error("رابط الصفحة الرئيسية غير صالح");
-  const feeds = await listFeeds();
+  if (id && BUILTIN_FEED_IDS.has(id)) throw new Error("المصادر المضمّنة لا تُعدَّل، يمكن تعطيلها فقط");
+  const feeds = await listCustomFeeds();
   const existing = id ? feeds.find((f) => f.id === id) : undefined;
   const feed: FeedSource = {
     ...input,
@@ -75,7 +132,12 @@ export async function saveFeed(input: FeedInput, user: string, id?: string): Pro
   return feed;
 }
 
-export async function deleteFeed(id: string): Promise<void> {
+/** Removes an admin-added source; a built-in one is disabled instead. */
+export async function deleteFeed(id: string, user = "admin"): Promise<void> {
+  if (BUILTIN_FEED_IDS.has(id)) {
+    await setFeedEnabled(id, false, user);
+    return;
+  }
   await getStore().hdel(FEEDS_KEY, id);
   await getStore().del(`feed:items:${id}`);
 }
@@ -152,7 +214,7 @@ export function parseFeed(xml: string, source: { id: string; name: string }, lim
 async function refreshFeed(feed: FeedSource, previous: FeedCache | null): Promise<FeedCache> {
   try {
     const { text } = await safeFetchText(feed.url, { allowedHosts: newsAllowedHosts(), maxBytes: 1_500_000 });
-    const items = parseFeed(text, feed);
+    const items = parseFeed(text, feed, feed.limit ?? 20);
     const cache: FeedCache = { items, fetchedAt: new Date().toISOString(), freshUntil: Date.now() + FEED_TTL_MS, error: null };
     await getStore().set(`feed:items:${feed.id}`, cache, 7 * 86400);
     return cache;
@@ -189,9 +251,33 @@ export async function getFeedItems(options: { force?: boolean } = {}): Promise<{
   return { items: items.slice(0, 60), errors };
 }
 
+export interface FeedSourceLabel {
+  name: string;
+  homepage: string | null;
+}
+
+/**
+ * Publisher names + homepages of the enabled sources, for the attribution list
+ * under the headlines. Cached like every other render-time store read.
+ */
+export async function qFeedSources(): Promise<FeedSourceLabel[]> {
+  "use cache";
+  cacheLife("reference");
+  cacheTag("feeds");
+  const byName = new Map<string, string | null>();
+  for (const f of await listFeeds()) {
+    if (!f.enabled) continue;
+    const home = typeof f.homepage === "string" && f.homepage ? f.homepage : null;
+    const known = byName.get(f.name);
+    if (!byName.has(f.name)) byName.set(f.name, home);
+    else if (!known && home) byName.set(f.name, home);
+  }
+  return [...byName.entries()].map(([name, homepage]) => ({ name, homepage }));
+}
+
 export async function qHeadlines(): Promise<FeedItem[]> {
   "use cache";
-  cacheLife("fixtures");
+  cacheLife("news");
   cacheTag("feeds");
   try {
     return (await getFeedItems()).items;

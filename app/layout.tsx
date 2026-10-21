@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteNotice, TestDataBanner } from "@/components/layout/SiteNotices";
+import { SampleDataNotice, SiteNotice } from "@/components/layout/SiteNotices";
 import { siteUrl } from "@/lib/env";
 import { SITE, SKIN_BOOT_SCRIPT } from "@/lib/site";
 import "./globals.css";
@@ -64,7 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <SiteHeader />
         <div className="ys-container">
-          <TestDataBanner />
+          <SampleDataNotice />
           <SiteNotice />
         </div>
         <main id="main" className="ys-main ys-container">

@@ -80,6 +80,9 @@ const nextConfig: NextConfig = {
     reference: { stale: 300, revalidate: 21600, expire: 604800 },
     // Finished matches and past dates.
     archive: { stale: 300, revalidate: 43200, expire: 2592000 },
+    // News headlines from the RSS sources (the feeds themselves are re-fetched
+    // at most every 30 minutes by lib/content/feeds.ts).
+    news: { stale: 300, revalidate: 900, expire: 86400 },
     // Error / not-configured states: retry soon.
     retry: { stale: 30, revalidate: 60, expire: 300 },
   },

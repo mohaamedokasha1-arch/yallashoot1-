@@ -44,7 +44,7 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
         </Notice>
       ) : null}
       {cfg.baseUrlError ? <Notice variant="error">{cfg.baseUrlError}</Notice> : null}
-      {!cfg.isOfficial && cfg.apiKey ? <Notice variant="test">الموقع متصل بخادم غير رسمي (اختبار/محاكاة): {cfg.baseUrl}</Notice> : null}
+      {!cfg.isOfficial && cfg.apiKey ? <Notice variant="test">مزود البيانات مضبوط على خادم غير رسمي: <span dir="ltr">{cfg.baseUrl}</span>. غيّر FOOTBALL_API_BASE_URL إلى العنوان الرسمي لعرض المباريات الحقيقية.</Notice> : null}
       {!contentWritesAllowed() ? (
         <Notice variant="warn" title="لا يوجد تخزين دائم">
           التخزين الحالي ({store.kind}) غير مشترك بين خوادم Vercel. الكاش يعمل لكل خادم على حدة، وحفظ المحتوى والإعدادات معطّل. أضف Upstash Redis لتفعيلها.

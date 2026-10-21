@@ -3,6 +3,7 @@
 import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { BUILTIN_FEED_IDS } from "@/data/news-feeds";
 import type { ActionState, CoverageReport } from "@/lib/admin/action-state";
 import { DUMMY_HASH, verifyPassword } from "@/lib/admin/password";
 import {
@@ -18,7 +19,7 @@ import {
 import { getSettings, saveSettings, settingsSchema } from "@/lib/admin/settings";
 import { annotationInputSchema, deleteAnnotation, saveAnnotation } from "@/lib/content/annotations";
 import { articleInputSchema, deleteArticle, saveArticle } from "@/lib/content/articles";
-import { deleteFeed, feedInputSchema, getFeedItems, saveFeed } from "@/lib/content/feeds";
+import { deleteFeed, feedInputSchema, getFeedItems, saveFeed, setFeedEnabled } from "@/lib/content/feeds";
 import { adminConfig } from "@/lib/env";
 import { getResource } from "@/lib/football/cache";
 import { EGYPT_PREMIER_LEAGUE_ID } from "@/lib/football/featured";
@@ -276,14 +277,28 @@ export async function saveFeedAction(_prev: ActionState, formData: FormData): Pr
   return { ok: true, message: "تم حفظ مصدر الأخبار." };
 }
 
+const FEED_ID = /^[a-z0-9-]{3,64}$/;
+
 export async function deleteFeedAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireSession("admin");
+  const session = await requireSession("admin");
   if (!contentWritesAllowed()) return fail(NOT_PERSISTENT);
   const id = str(formData, "id");
-  if (!/^[0-9a-f-]{36}$/.test(id)) return fail("معرّف غير صالح.");
-  await deleteFeed(id);
+  if (!FEED_ID.test(id)) return fail("معرّف غير صالح.");
+  await deleteFeed(id, session.username);
   updateTag("feeds");
-  return { ok: true, message: "تم حذف المصدر." };
+  return { ok: true, message: BUILTIN_FEED_IDS.has(id) ? "تم تعطيل المصدر." : "تم حذف المصدر." };
+}
+
+/** Switches a source on/off. Built-in sources stay in the catalogue. */
+export async function toggleFeedAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await requireSession("admin");
+  if (!contentWritesAllowed()) return fail(NOT_PERSISTENT);
+  const id = str(formData, "id");
+  if (!FEED_ID.test(id)) return fail("معرّف غير صالح.");
+  const enabled = str(formData, "enabled") === "1";
+  await setFeedEnabled(id, enabled, session.username);
+  updateTag("feeds");
+  return { ok: true, message: enabled ? "تم تفعيل المصدر." : "تم تعطيل المصدر." };
 }
 
 export async function refreshFeedsAction(_prev: ActionState, _formData: FormData): Promise<ActionState> {

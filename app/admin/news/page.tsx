@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { deleteArticleAction, deleteFeedAction, refreshFeedsAction, saveArticleAction, saveFeedAction } from "@/app/admin/actions";
+import { deleteArticleAction, deleteFeedAction, refreshFeedsAction, saveArticleAction, saveFeedAction, toggleFeedAction } from "@/app/admin/actions";
 import { ActionForm } from "@/components/admin/ActionForm";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { Field, Select, TextArea, TextInput } from "@/components/admin/Field";
@@ -17,7 +17,9 @@ export default async function AdminNewsPage({ searchParams }: PageProps<"/admin/
   const session = await requireSession("editor");
   const sp = await searchParams;
   const editId = typeof sp.edit === "string" && /^[0-9a-f-]{36}$/.test(sp.edit) ? sp.edit : null;
-  const [articles, feeds, editing] = await Promise.all([listArticles(true), listFeeds(), editId ? getArticleById(editId) : null]);
+  const [articles, allFeeds, editing] = await Promise.all([listArticles(true), listFeeds(), editId ? getArticleById(editId) : null]);
+  const builtinFeeds = allFeeds.filter((f) => f.builtin);
+  const feeds = allFeeds.filter((f) => !f.builtin);
   const writable = contentWritesAllowed();
 
   return (
@@ -113,10 +115,49 @@ export default async function AdminNewsPage({ searchParams }: PageProps<"/admin/
 
       {session.role === "admin" ? (
         <section className="card space-y-3 p-4">
-          <h2 className="text-lg font-extrabold">مصادر أخبار مرخّصة (RSS)</h2>
+          <h2 className="text-lg font-extrabold">مصادر الأخبار (RSS)</h2>
           <p className="text-sm text-slate-600">
-            تُعرض العناوين والروابط فقط مع اسم المصدر. أضف مصدرًا فقط إذا كانت شروطه تسمح بإعادة عرض العناوين، واذكر سند الإذن.
+            تُعرض العناوين وتاريخ النشر واسم المصدر ورابط الخبر الأصلي فقط — لا يُنسخ نص الخبر أو صوره. المصادر المضمّنة خلاصات مجانية
+            ينشرها الناشرون على مواقعهم (القائمة في <code dir="ltr">data/news-feeds.ts</code>)، ويمكن تعطيل أي مصدر من هنا. عند إضافة مصدر
+            جديد تأكد أن شروطه تسمح بإعادة عرض العناوين واذكر سند الإذن.
           </p>
+          <div className="overflow-x-auto rounded-lg border border-slate-200">
+            <table className="w-full min-w-[36rem] text-right text-sm">
+              <thead className="bg-slate-50 text-xs text-slate-600">
+                <tr>
+                  <th className="px-3 py-2 font-bold">المصدر المضمّن</th>
+                  <th className="px-3 py-2 font-bold">القسم</th>
+                  <th className="px-3 py-2 font-bold">الرابط</th>
+                  <th className="px-3 py-2 font-bold">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {builtinFeeds.map((f) => (
+                  <tr key={f.id}>
+                    <td className="px-3 py-2 font-bold">{f.name}</td>
+                    <td className="px-3 py-2 text-xs text-slate-500">{f.section}</td>
+                    <td className="max-w-[16rem] truncate px-3 py-2 text-xs text-slate-500" dir="ltr" title={f.url}>
+                      <a href={f.url} className="hover:underline" target="_blank" rel="noopener noreferrer">
+                        {f.url.replace(/^https:\/\//, "")}
+                      </a>
+                    </td>
+                    <td className="px-3 py-2">
+                      <ActionForm
+                        action={toggleFeedAction}
+                        submitLabel={f.enabled ? "تعطيل" : "تفعيل"}
+                        variant={f.enabled ? "danger" : "secondary"}
+                        className="space-y-0"
+                      >
+                        <input type="hidden" name="id" value={f.id} />
+                        <input type="hidden" name="enabled" value={f.enabled ? "0" : "1"} />
+                      </ActionForm>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <h3 className="text-base font-extrabold">إضافة مصدر جديد</h3>
           <ActionForm action={saveFeedAction} submitLabel="إضافة المصدر">
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="اسم المصدر" htmlFor="feed-name">
@@ -136,6 +177,7 @@ export default async function AdminNewsPage({ searchParams }: PageProps<"/admin/
               <input type="checkbox" name="enabled" defaultChecked className="size-4" /> مفعّل
             </label>
           </ActionForm>
+          <h3 className="text-base font-extrabold">مصادر مضافة يدويًا ({feeds.length})</h3>
           <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
             {feeds.map((f) => (
               <li key={f.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm">
@@ -153,9 +195,9 @@ export default async function AdminNewsPage({ searchParams }: PageProps<"/admin/
                 </ActionForm>
               </li>
             ))}
-            {feeds.length === 0 ? <li className="px-3 py-3 text-center text-sm text-slate-500">لا توجد مصادر.</li> : null}
+            {feeds.length === 0 ? <li className="px-3 py-3 text-center text-sm text-slate-500">لا توجد مصادر مضافة يدويًا.</li> : null}
           </ul>
-          {feeds.length ? <ActionForm action={refreshFeedsAction} submitLabel="جلب العناوين الآن" variant="secondary" /> : null}
+          <ActionForm action={refreshFeedsAction} submitLabel="جلب العناوين الآن" variant="secondary" />
         </section>
       ) : null}
     </AdminShell>

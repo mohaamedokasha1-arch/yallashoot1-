@@ -50,7 +50,7 @@ export interface FootballConfig {
   provider: "api-football";
   apiKey: string | null;
   baseUrl: string;
-  /** False when pointing at a mock/test server: pages then show a test banner. */
+  /** False when pointing at a non-official server: pages then label the data as samples. */
   isOfficial: boolean;
   /** Base URL problems (invalid or insecure) — reported in the admin panel. */
   baseUrlError: string | null;

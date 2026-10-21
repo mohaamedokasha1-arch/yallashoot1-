@@ -7,7 +7,9 @@ test.describe("home page", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "ar");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("مباريات اليوم");
-    await expect(page.getByText("بيئة اختبار")).toBeVisible();
+    // The E2E server points at the sample-data provider, so the page must label
+    // the fixtures as samples instead of passing them off as real matches.
+    await expect(page.getByText("أمثلة توضيحية للتصميم")).toBeVisible();
 
     // Egyptian section is the first region of the board.
     const board = page.locator(".match-board").first();

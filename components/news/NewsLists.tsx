@@ -23,8 +23,8 @@ export function HeadlineList({ items }: { items: readonly FeedItem[] }) {
   return (
     <Section
       id="headlines"
-      title="عناوين من مصادر مرخّصة"
-      subtitle="نعرض العنوان ورابط المصدر الأصلي فقط — اقرأ الخبر كاملًا لدى ناشره"
+      title="عناوين الأخبار"
+      subtitle="أحدث العناوين من مصادر الأخبار الرياضية — اقرأ الخبر كاملًا لدى ناشره"
       bodyClassName="ys-block-body"
     >
       <ul className="ys-grid ys-news-grid">
