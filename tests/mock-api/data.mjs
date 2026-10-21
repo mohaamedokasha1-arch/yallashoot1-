@@ -41,6 +41,18 @@ function offsetMinutes(ms) {
   const p = cairoParts(ms);
   return Math.round((Date.UTC(p.y, p.m - 1, p.d, p.h, p.mi, p.s) - Math.floor(ms / 1000) * 1000) / 60000);
 }
+/**
+ * ISO string in Cairo wall-clock time with its offset, e.g. "2026-10-21T20:00:00+03:00" —
+ * what the real API writes in `fixture.date` when called with timezone=Africa/Cairo.
+ */
+export function cairoIso(ms) {
+  const p = cairoParts(ms);
+  const off = offsetMinutes(ms);
+  const pad = (n) => String(n).padStart(2, "0");
+  const sign = off < 0 ? "-" : "+";
+  const abs = Math.abs(off);
+  return `${p.y}-${pad(p.m)}-${pad(p.d)}T${pad(p.h)}:${pad(p.mi)}:${pad(p.s)}${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+}
 /** UTC epoch ms for a Cairo wall-clock time. */
 export function cairoToUtc(date, hh, mm) {
   const [y, m, d] = date.split("-").map(Number);
@@ -211,7 +223,7 @@ function fixture({ id, leagueId, season, round, utcMs, status, elapsed = null, e
       id,
       referee: played ? "A. Referee" : null,
       timezone: TZ,
-      date: new Date(utcMs).toISOString().replace(".000Z", "+00:00"),
+      date: cairoIso(utcMs),
       timestamp: Math.floor(utcMs / 1000),
       periods: { first: played ? Math.floor(utcMs / 1000) : null, second: null },
       venue: { id: null, name: h.venue, city: h.city },
@@ -297,7 +309,7 @@ export function createDataset(nowMs = Date.now()) {
         id: 910000 + i,
         referee: null,
         timezone: TZ,
-        date: new Date(utcMs).toISOString().replace(".000Z", "+00:00"),
+        date: cairoIso(utcMs),
         timestamp: Math.floor(utcMs / 1000),
         periods: { first: null, second: null },
         venue: o.venue,

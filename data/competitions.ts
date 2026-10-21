@@ -6,8 +6,13 @@
  * section placement. What is actually shown always comes from the provider.
  *
  * `idSource` documents how each id was confirmed while building the project:
- *  - "api-sample":  seen in real API-Football responses (fixtures/leagues).
- *  - "third-party": taken from open-source projects that consume API-Football.
+ *  - "api-sample":  the id, name and country were seen in real API-Football
+ *                   responses — samples fetched while building, or published
+ *                   raw exports of /fixtures and /leagues responses (the
+ *                   evidence for Egyptian/African ids is listed in
+ *                   docs/data-coverage.md).
+ *  - "third-party": taken from hand-written configs of projects that consume
+ *                   API-Football, not yet matched against a real response.
  *  - "unverified":  believed correct, must be confirmed by the coverage check
  *                   (admin panel → "التحقق من التغطية", or `npm run check:provider`).
  *
@@ -48,22 +53,22 @@ export interface CompetitionEntry {
 export const COMPETITIONS: readonly CompetitionEntry[] = [
   // ── Egypt ───────────────────────────────────────────────────────────────
   { id: 233, slug: "egyptian-premier-league", nameAr: "الدوري المصري الممتاز", apiName: "Premier League", apiCountry: "Egypt", region: "egypt", priority: 1, type: "league", idSource: "api-sample", featured: true },
-  { id: 714, slug: "egypt-cup", nameAr: "كأس مصر", apiName: "Cup", apiCountry: "Egypt", region: "egypt", priority: 2, type: "cup", idSource: "third-party", featured: true },
+  { id: 714, slug: "egypt-cup", nameAr: "كأس مصر", apiName: "Cup", apiCountry: "Egypt", region: "egypt", priority: 2, type: "cup", idSource: "api-sample", featured: true },
   { id: 539, slug: "egyptian-super-cup", nameAr: "كأس السوبر المصري", apiName: "Super Cup", apiCountry: "Egypt", region: "egypt", priority: 3, type: "cup", idSource: "api-sample", featured: true },
-  { id: 895, slug: "egyptian-league-cup", nameAr: "كأس رابطة الأندية المصرية", apiName: "League Cup", apiCountry: "Egypt", region: "egypt", priority: 4, type: "cup", idSource: "third-party", featured: true },
-  { id: 887, slug: "egyptian-second-division", nameAr: "دوري المحترفين المصري (الدرجة الثانية)", apiName: "Second League", apiCountry: "Egypt", region: "egypt", priority: 5, type: "league", idSource: "third-party", featured: true },
+  { id: 895, slug: "egyptian-league-cup", nameAr: "كأس رابطة الأندية المصرية", apiName: "League Cup", apiCountry: "Egypt", region: "egypt", priority: 4, type: "cup", idSource: "api-sample", featured: true },
+  { id: 887, slug: "egyptian-second-division", nameAr: "دوري المحترفين المصري (الدرجة الثانية)", apiName: "Second League", apiCountry: "Egypt", region: "egypt", priority: 5, type: "league", idSource: "api-sample", featured: true },
 
   // ── African competitions & national teams ─────────────────────────────
-  { id: 12, slug: "caf-champions-league", nameAr: "دوري أبطال إفريقيا", apiName: "CAF Champions League", apiCountry: "World", region: "africa", priority: 1, type: "cup", idSource: "third-party", featured: true },
-  { id: 20, slug: "caf-confederation-cup", nameAr: "كأس الكونفدرالية الإفريقية", apiName: "CAF Confederation Cup", apiCountry: "World", region: "africa", priority: 2, type: "cup", idSource: "third-party", featured: true },
-  { id: 6, slug: "africa-cup-of-nations", nameAr: "كأس الأمم الإفريقية", apiName: "Africa Cup of Nations", apiCountry: "World", region: "africa", priority: 3, type: "cup", idSource: "third-party", featured: true },
-  { id: 36, slug: "africa-cup-of-nations-qualification", nameAr: "تصفيات كأس الأمم الإفريقية", apiName: "Africa Cup of Nations - Qualification", apiCountry: "World", region: "africa", priority: 4, type: "cup", idSource: "third-party", featured: true },
-  { id: 29, slug: "world-cup-qualification-africa", nameAr: "تصفيات كأس العالم - إفريقيا", apiName: "World Cup - Qualification Africa", apiCountry: "World", region: "africa", priority: 5, type: "cup", idSource: "third-party", featured: true },
+  { id: 12, slug: "caf-champions-league", nameAr: "دوري أبطال إفريقيا", apiName: "CAF Champions League", apiCountry: "World", region: "africa", priority: 1, type: "cup", idSource: "api-sample", featured: true },
+  { id: 20, slug: "caf-confederation-cup", nameAr: "كأس الكونفدرالية الإفريقية", apiName: "CAF Confederation Cup", apiCountry: "World", region: "africa", priority: 2, type: "cup", idSource: "api-sample", featured: true },
+  { id: 6, slug: "africa-cup-of-nations", nameAr: "كأس الأمم الإفريقية", apiName: "Africa Cup of Nations", apiCountry: "World", region: "africa", priority: 3, type: "cup", idSource: "api-sample", featured: true },
+  { id: 36, slug: "africa-cup-of-nations-qualification", nameAr: "تصفيات كأس الأمم الإفريقية", apiName: "Africa Cup of Nations - Qualification", apiCountry: "World", region: "africa", priority: 4, type: "cup", idSource: "api-sample", featured: true },
+  { id: 29, slug: "world-cup-qualification-africa", nameAr: "تصفيات كأس العالم - إفريقيا", apiName: "World Cup - Qualification Africa", apiCountry: "World", region: "africa", priority: 5, type: "cup", idSource: "api-sample", featured: true },
   { id: 288, slug: "south-africa-premier-soccer-league", nameAr: "الدوري الجنوب إفريقي", apiName: "Premier Soccer League", apiCountry: "South-Africa", region: "africa", priority: 20, type: "league", idSource: "api-sample", featured: false },
 
   // ── England ─────────────────────────────────────────────────────────────
   { id: 39, slug: "premier-league", nameAr: "الدوري الإنجليزي الممتاز", apiName: "Premier League", apiCountry: "England", region: "england", priority: 1, type: "league", idSource: "api-sample", featured: true },
-  { id: 45, slug: "fa-cup", nameAr: "كأس الاتحاد الإنجليزي", apiName: "FA Cup", apiCountry: "England", region: "england", priority: 2, type: "cup", idSource: "unverified", featured: true },
+  { id: 45, slug: "fa-cup", nameAr: "كأس الاتحاد الإنجليزي", apiName: "FA Cup", apiCountry: "England", region: "england", priority: 2, type: "cup", idSource: "api-sample", featured: true },
   { id: 48, slug: "efl-cup", nameAr: "كأس رابطة الأندية الإنجليزية", apiName: "League Cup", apiCountry: "England", region: "england", priority: 3, type: "cup", idSource: "api-sample", featured: true },
   { id: 40, slug: "efl-championship", nameAr: "دوري البطولة الإنجليزية", apiName: "Championship", apiCountry: "England", region: "england", priority: 4, type: "league", idSource: "api-sample", featured: true },
   { id: 528, slug: "community-shield", nameAr: "درع المجتمع الإنجليزي", apiName: "Community Shield", apiCountry: "England", region: "england", priority: 5, type: "cup", idSource: "api-sample", featured: true },
@@ -79,13 +84,13 @@ export const COMPETITIONS: readonly CompetitionEntry[] = [
   { id: 135, slug: "serie-a", nameAr: "الدوري الإيطالي", apiName: "Serie A", apiCountry: "Italy", region: "europe", priority: 6, type: "league", idSource: "api-sample", featured: true },
   { id: 78, slug: "bundesliga", nameAr: "الدوري الألماني", apiName: "Bundesliga", apiCountry: "Germany", region: "europe", priority: 7, type: "league", idSource: "api-sample", featured: true },
   { id: 61, slug: "ligue-1", nameAr: "الدوري الفرنسي", apiName: "Ligue 1", apiCountry: "France", region: "europe", priority: 8, type: "league", idSource: "api-sample", featured: true },
-  { id: 143, slug: "copa-del-rey", nameAr: "كأس ملك إسبانيا", apiName: "Copa del Rey", apiCountry: "Spain", region: "europe", priority: 9, type: "cup", idSource: "unverified", featured: true },
+  { id: 143, slug: "copa-del-rey", nameAr: "كأس ملك إسبانيا", apiName: "Copa del Rey", apiCountry: "Spain", region: "europe", priority: 9, type: "cup", idSource: "api-sample", featured: true },
   { id: 137, slug: "coppa-italia", nameAr: "كأس إيطاليا", apiName: "Coppa Italia", apiCountry: "Italy", region: "europe", priority: 10, type: "cup", idSource: "api-sample", featured: true },
   { id: 81, slug: "dfb-pokal", nameAr: "كأس ألمانيا", apiName: "DFB Pokal", apiCountry: "Germany", region: "europe", priority: 11, type: "cup", idSource: "api-sample", featured: true },
-  { id: 66, slug: "coupe-de-france", nameAr: "كأس فرنسا", apiName: "Coupe de France", apiCountry: "France", region: "europe", priority: 12, type: "cup", idSource: "unverified", featured: true },
+  { id: 66, slug: "coupe-de-france", nameAr: "كأس فرنسا", apiName: "Coupe de France", apiCountry: "France", region: "europe", priority: 12, type: "cup", idSource: "api-sample", featured: true },
   { id: 88, slug: "eredivisie", nameAr: "الدوري الهولندي", apiName: "Eredivisie", apiCountry: "Netherlands", region: "europe", priority: 13, type: "league", idSource: "api-sample", featured: true },
   { id: 94, slug: "primeira-liga", nameAr: "الدوري البرتغالي", apiName: "Primeira Liga", apiCountry: "Portugal", region: "europe", priority: 14, type: "league", idSource: "api-sample", featured: true },
-  { id: 203, slug: "turkish-super-lig", nameAr: "الدوري التركي", apiName: "Süper Lig", apiCountry: "Turkey", region: "europe", priority: 15, type: "league", idSource: "unverified", featured: true },
+  { id: 203, slug: "turkish-super-lig", nameAr: "الدوري التركي", apiName: "Süper Lig", apiCountry: "Turkey", region: "europe", priority: 15, type: "league", idSource: "api-sample", featured: true },
   { id: 179, slug: "scottish-premiership", nameAr: "الدوري الاسكتلندي", apiName: "Premiership", apiCountry: "Scotland", region: "europe", priority: 16, type: "league", idSource: "api-sample", featured: false },
   { id: 144, slug: "belgian-pro-league", nameAr: "الدوري البلجيكي", apiName: "Jupiler Pro League", apiCountry: "Belgium", region: "europe", priority: 17, type: "league", idSource: "api-sample", featured: false },
   { id: 141, slug: "la-liga-2", nameAr: "الدوري الإسباني - الدرجة الثانية", apiName: "Segunda División", apiCountry: "Spain", region: "europe", priority: 18, type: "league", idSource: "api-sample", featured: false },
@@ -96,27 +101,27 @@ export const COMPETITIONS: readonly CompetitionEntry[] = [
   { id: 218, slug: "austrian-bundesliga", nameAr: "الدوري النمساوي", apiName: "Bundesliga", apiCountry: "Austria", region: "europe", priority: 23, type: "league", idSource: "api-sample", featured: false },
 
   // ── Arab competitions ────────────────────────────────────────────────────
-  { id: 307, slug: "saudi-pro-league", nameAr: "دوري روشن السعودي", apiName: "Pro League", apiCountry: "Saudi-Arabia", region: "arab", priority: 1, type: "league", idSource: "third-party", featured: true },
+  { id: 307, slug: "saudi-pro-league", nameAr: "دوري روشن السعودي", apiName: "Pro League", apiCountry: "Saudi-Arabia", region: "arab", priority: 1, type: "league", idSource: "api-sample", featured: true },
   { id: 504, slug: "saudi-kings-cup", nameAr: "كأس خادم الحرمين الشريفين", apiName: "King's Cup", apiCountry: "Saudi-Arabia", region: "arab", priority: 2, type: "cup", idSource: "api-sample", featured: true },
   { id: 826, slug: "saudi-super-cup", nameAr: "كأس السوبر السعودي", apiName: "Super Cup", apiCountry: "Saudi-Arabia", region: "arab", priority: 3, type: "cup", idSource: "api-sample", featured: true },
-  { id: 200, slug: "botola-pro", nameAr: "الدوري المغربي (البطولة الاحترافية)", apiName: "Botola Pro", apiCountry: "Morocco", region: "arab", priority: 4, type: "league", idSource: "third-party", featured: true },
-  { id: 186, slug: "algeria-ligue-1", nameAr: "الدوري الجزائري", apiName: "Ligue 1", apiCountry: "Algeria", region: "arab", priority: 5, type: "league", idSource: "third-party", featured: true },
-  { id: 202, slug: "tunisia-ligue-1", nameAr: "الدوري التونسي", apiName: "Ligue 1", apiCountry: "Tunisia", region: "arab", priority: 6, type: "league", idSource: "unverified", featured: true },
-  { id: 305, slug: "qatar-stars-league", nameAr: "دوري نجوم قطر", apiName: "Stars League", apiCountry: "Qatar", region: "arab", priority: 7, type: "league", idSource: "unverified", featured: true },
+  { id: 200, slug: "botola-pro", nameAr: "الدوري المغربي (البطولة الاحترافية)", apiName: "Botola Pro", apiCountry: "Morocco", region: "arab", priority: 4, type: "league", idSource: "api-sample", featured: true },
+  { id: 186, slug: "algeria-ligue-1", nameAr: "الدوري الجزائري", apiName: "Ligue 1", apiCountry: "Algeria", region: "arab", priority: 5, type: "league", idSource: "api-sample", featured: true },
+  { id: 202, slug: "tunisia-ligue-1", nameAr: "الدوري التونسي", apiName: "Ligue 1", apiCountry: "Tunisia", region: "arab", priority: 6, type: "league", idSource: "api-sample", featured: true },
+  { id: 305, slug: "qatar-stars-league", nameAr: "دوري نجوم قطر", apiName: "Stars League", apiCountry: "Qatar", region: "arab", priority: 7, type: "league", idSource: "api-sample", featured: true },
   { id: 301, slug: "uae-pro-league", nameAr: "دوري أدنوك للمحترفين الإماراتي", apiName: "Pro League", apiCountry: "United-Arab-Emirates", region: "arab", priority: 8, type: "league", idSource: "api-sample", featured: true },
-  { id: 584, slug: "libya-premier-league", nameAr: "الدوري الليبي", apiName: "Premier League", apiCountry: "Libya", region: "arab", priority: 9, type: "league", idSource: "third-party", featured: true },
+  { id: 584, slug: "libya-premier-league", nameAr: "الدوري الليبي", apiName: "Premier League", apiCountry: "Libya", region: "arab", priority: 9, type: "league", idSource: "api-sample", featured: true },
   { id: 542, slug: "iraqi-league", nameAr: "دوري نجوم العراق", apiName: "Iraqi League", apiCountry: "Iraq", region: "arab", priority: 10, type: "league", idSource: "api-sample", featured: true },
   { id: 402, slug: "sudan-premier-league", nameAr: "الدوري السوداني الممتاز", apiName: "Sudani Premier League", apiCountry: "Sudan", region: "arab", priority: 11, type: "league", idSource: "api-sample", featured: false },
   { id: 390, slug: "lebanon-premier-league", nameAr: "الدوري اللبناني", apiName: "Premier League", apiCountry: "Lebanon", region: "arab", priority: 12, type: "league", idSource: "api-sample", featured: false },
-  { id: 201, slug: "botola-2", nameAr: "الدوري المغربي - الدرجة الثانية", apiName: "Botola 2", apiCountry: "Morocco", region: "arab", priority: 13, type: "league", idSource: "third-party", featured: false },
-  { id: 822, slug: "morocco-throne-cup", nameAr: "كأس العرش المغربي", apiName: "Coupe du Trône", apiCountry: "Morocco", region: "arab", priority: 14, type: "cup", idSource: "third-party", featured: false },
+  { id: 201, slug: "botola-2", nameAr: "الدوري المغربي - الدرجة الثانية", apiName: "Botola 2", apiCountry: "Morocco", region: "arab", priority: 13, type: "league", idSource: "api-sample", featured: false },
+  { id: 822, slug: "morocco-throne-cup", nameAr: "كأس العرش المغربي", apiName: "Cup", apiCountry: "Morocco", region: "arab", priority: 14, type: "cup", idSource: "api-sample", featured: false },
   { id: 824, slug: "qatar-emir-cup", nameAr: "كأس أمير قطر", apiName: "Emir Cup", apiCountry: "Qatar", region: "arab", priority: 15, type: "cup", idSource: "api-sample", featured: false },
   { id: 720, slug: "kuwait-emir-cup", nameAr: "كأس أمير الكويت", apiName: "Emir Cup", apiCountry: "Kuwait", region: "arab", priority: 16, type: "cup", idSource: "api-sample", featured: false },
 
   // ── International ────────────────────────────────────────────────────────
   { id: 1, slug: "fifa-world-cup", nameAr: "كأس العالم", apiName: "World Cup", apiCountry: "World", region: "international", priority: 1, type: "cup", idSource: "api-sample", featured: true },
-  { id: 15, slug: "fifa-club-world-cup", nameAr: "كأس العالم للأندية", apiName: "FIFA Club World Cup", apiCountry: "World", region: "international", priority: 2, type: "cup", idSource: "unverified", featured: true },
-  { id: 32, slug: "world-cup-qualification-europe", nameAr: "تصفيات كأس العالم - أوروبا", apiName: "World Cup - Qualification Europe", apiCountry: "World", region: "international", priority: 3, type: "cup", idSource: "third-party", featured: true },
+  { id: 15, slug: "fifa-club-world-cup", nameAr: "كأس العالم للأندية", apiName: "FIFA Club World Cup", apiCountry: "World", region: "international", priority: 2, type: "cup", idSource: "api-sample", featured: true },
+  { id: 32, slug: "world-cup-qualification-europe", nameAr: "تصفيات كأس العالم - أوروبا", apiName: "World Cup - Qualification Europe", apiCountry: "World", region: "international", priority: 3, type: "cup", idSource: "api-sample", featured: true },
   { id: 30, slug: "world-cup-qualification-asia", nameAr: "تصفيات كأس العالم - آسيا", apiName: "World Cup - Qualification Asia", apiCountry: "World", region: "international", priority: 4, type: "cup", idSource: "api-sample", featured: true },
   { id: 34, slug: "world-cup-qualification-south-america", nameAr: "تصفيات كأس العالم - أمريكا الجنوبية", apiName: "World Cup - Qualification South America", apiCountry: "World", region: "international", priority: 5, type: "cup", idSource: "api-sample", featured: true },
   { id: 37, slug: "world-cup-qualification-playoffs", nameAr: "الملحق العالمي المؤهل لكأس العالم", apiName: "World Cup - Qualification Intercontinental Play-offs", apiCountry: "World", region: "international", priority: 6, type: "cup", idSource: "api-sample", featured: true },
