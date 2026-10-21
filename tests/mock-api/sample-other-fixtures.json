@@ -1,0 +1,219 @@
+[
+ {
+  "league": {
+   "id": 129,
+   "name": "Primera Nacional",
+   "country": "Argentina",
+   "logo": "https://media.api-sports.io/football/leagues/129.png",
+   "flag": "https://media.api-sports.io/flags/ar.svg",
+   "season": 2025,
+   "round": "Regular Season - 14"
+  },
+  "home": {
+   "id": 1946,
+   "name": "Chaco For Ever",
+   "logo": "https://media.api-sports.io/football/teams/1946.png"
+  },
+  "away": {
+   "id": 1067,
+   "name": "Defensores De Belgrano",
+   "logo": "https://media.api-sports.io/football/teams/1067.png"
+  },
+  "status": "FT",
+  "goals": {
+   "home": 1,
+   "away": 0
+  },
+  "venue": {
+   "id": 55,
+   "name": "Estadio Juan Alberto García",
+   "city": "Resistencia, Provincia del Chaco"
+  }
+ },
+ {
+  "league": {
+   "id": 242,
+   "name": "Liga Pro",
+   "country": "Ecuador",
+   "logo": "https://media.api-sports.io/football/leagues/242.png",
+   "flag": "https://media.api-sports.io/flags/ec.svg",
+   "season": 2025,
+   "round": "Regular Season - 12"
+  },
+  "home": {
+   "id": 1150,
+   "name": "El Nacional",
+   "logo": "https://media.api-sports.io/football/teams/1150.png"
+  },
+  "away": {
+   "id": 21103,
+   "name": "Cuniburo",
+   "logo": "https://media.api-sports.io/football/teams/21103.png"
+  },
+  "status": "FT",
+  "goals": {
+   "home": 2,
+   "away": 1
+  },
+  "venue": {
+   "id": 465,
+   "name": "Estadio Olímpico Atahualpa",
+   "city": "Quito"
+  }
+ },
+ {
+  "league": {
+   "id": 72,
+   "name": "Serie B",
+   "country": "Brazil",
+   "logo": "https://media.api-sports.io/football/leagues/72.png",
+   "flag": "https://media.api-sports.io/flags/br.svg",
+   "season": 2025,
+   "round": "Regular Season - 7"
+  },
+  "home": {
+   "id": 10862,
+   "name": "Amazonas",
+   "logo": "https://media.api-sports.io/football/teams/10862.png"
+  },
+  "away": {
+   "id": 146,
+   "name": "CRB",
+   "logo": "https://media.api-sports.io/football/teams/146.png"
+  },
+  "status": "FT",
+  "goals": {
+   "home": 1,
+   "away": 1
+  },
+  "venue": {
+   "id": 20767,
+   "name": "Estádio Municipal Carlos Zamith",
+   "city": "Manaus, Amazonas"
+  }
+ },
+ {
+  "league": {
+   "id": 129,
+   "name": "Primera Nacional",
+   "country": "Argentina",
+   "logo": "https://media.api-sports.io/football/leagues/129.png",
+   "flag": "https://media.api-sports.io/flags/ar.svg",
+   "season": 2025,
+   "round": "Regular Season - 14"
+  },
+  "home": {
+   "id": 1951,
+   "name": "Central Norte",
+   "logo": "https://media.api-sports.io/football/teams/1951.png"
+  },
+  "away": {
+   "id": 1932,
+   "name": "San Telmo",
+   "logo": "https://media.api-sports.io/football/teams/1932.png"
+  },
+  "status": "FT",
+  "goals": {
+   "home": 1,
+   "away": 2
+  },
+  "venue": {
+   "id": 53,
+   "name": "Estadio Padre Ernesto Martearena",
+   "city": "Ciudad de Salta, Provincia de Salta"
+  }
+ },
+ {
+  "league": {
+   "id": 240,
+   "name": "Primera B",
+   "country": "Colombia",
+   "logo": "https://media.api-sports.io/football/leagues/240.png",
+   "flag": "https://media.api-sports.io/flags/co.svg",
+   "season": 2025,
+   "round": "Apertura - 15"
+  },
+  "home": {
+   "id": 22099,
+   "name": "Real Soacha",
+   "logo": "https://media.api-sports.io/football/teams/22099.png"
+  },
+  "away": {
+   "id": 1130,
+   "name": "Huila",
+   "logo": "https://media.api-sports.io/football/teams/1130.png"
+  },
+  "status": "FT",
+  "goals": {
+   "home": 1,
+   "away": 0
+  },
+  "venue": {
+   "id": 371,
+   "name": "Estadio Metropolitano de Techo",
+   "city": "Bogotá, D.C."
+  }
+ },
+ {
+  "league": {
+   "id": 1081,
+   "name": "CONMEBOL - U17 Femenino",
+   "country": "World",
+   "logo": "https://media.api-sports.io/football/leagues/1081.png",
+   "flag": null,
+   "season": 2025,
+   "round": "Final Round - 1"
+  },
+  "home": {
+   "id": 23377,
+   "name": "Colombia U17 W",
+   "logo": "https://media.api-sports.io/football/teams/23377.png"
+  },
+  "away": {
+   "id": 23379,
+   "name": "Peru U17 W",
+   "logo": "https://media.api-sports.io/football/teams/23379.png"
+  },
+  "status": "NS",
+  "goals": {
+   "home": null,
+   "away": null
+  },
+  "venue": {
+   "id": 368,
+   "name": "Estadio Olímpico Pascual Guerrero",
+   "city": "Santiago de Cali"
+  }
+ },
+ {
+  "league": {
+   "id": 240,
+   "name": "Primera B",
+   "country": "Colombia",
+   "logo": "https://media.api-sports.io/football/leagues/240.png",
+   "flag": "https://media.api-sports.io/flags/co.svg",
+   "season": 2025,
+   "round": "Apertura - 15"
+  },
+  "home": {
+   "id": 1461,
+   "name": "Quindio",
+   "logo": "https://media.api-sports.io/football/teams/1461.png"
+  },
+  "away": {
+   "id": 1469,
+   "name": "Orsomarso",
+   "logo": "https://media.api-sports.io/football/teams/1469.png"
+  },
+  "status": "NS",
+  "goals": {
+   "home": null,
+   "away": null
+  },
+  "venue": {
+   "id": 374,
+   "name": "Estadio Centenario",
+   "city": "Armenia"
+  }
+ }
+]
