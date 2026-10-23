@@ -35,7 +35,20 @@ export default async function AdminLogsPage() {
                   <td className="px-2 py-1" dir="ltr">{r.endpoint}</td>
                   <td className="max-w-[16rem] truncate px-2 py-1" dir="ltr">{r.params}</td>
                   <td className="px-2 py-1 text-center">{r.status ?? "—"}</td>
-                  <td className="px-2 py-1 text-center">{r.ok ? `ok (${r.results ?? 0})` : r.errorKind}</td>
+                  <td className="px-2 py-1 text-center">
+                    {r.ok ? (
+                      `ok (${r.results ?? 0})`
+                    ) : (
+                      <>
+                        {r.errorKind}
+                        {r.errorDetail ? (
+                          <span className="block max-w-[14rem] truncate text-rose-600" dir="ltr" title={r.errorDetail}>
+                            {r.errorDetail}
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </td>
                   <td className="px-2 py-1 text-center">{r.ms}</td>
                   <td className="px-2 py-1 text-center">{r.dailyRemaining ?? "—"}</td>
                 </tr>

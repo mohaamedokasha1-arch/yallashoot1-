@@ -80,4 +80,13 @@ describe("data status notices", () => {
     const html = renderToStaticMarkup(<DataStatus result={{ data: null, error: dataError("timeout"), stale: false, fetchedAt: null }} />);
     expect(html).toContain('role="alert"');
   });
+
+  it("promises an automatic retry only for transient failures", () => {
+    const transient = renderToStaticMarkup(<DataStatus result={{ data: null, error: dataError("network"), stale: false, fetchedAt: null }} />);
+    expect(transient).toContain("سيعاد المحاولة تلقائيًا");
+
+    const auth = renderToStaticMarkup(<DataStatus result={{ data: null, error: dataError("auth"), stale: false, fetchedAt: null }} />);
+    expect(auth).toContain("تعذّر التحقق من حساب مزود البيانات");
+    expect(auth).not.toContain("سيعاد المحاولة تلقائيًا");
+  });
 });

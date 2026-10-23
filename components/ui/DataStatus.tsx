@@ -19,6 +19,9 @@ export function LastUpdated({ fetchedAt, className }: { fetchedAt: string | null
   );
 }
 
+/** Kinds whose message may honestly promise an automatic retry. */
+const RETRYABLE_ERROR_KINDS = new Set(["server", "network", "timeout"]);
+
 /**
  * Explains data problems to visitors: stale fallback copies, missing
  * configuration, quota exhaustion or provider failures.
@@ -60,7 +63,10 @@ export function DataStatus({
     }
     return (
       <Notice variant="error" className={className} title={`تعذّر تحميل ${subject}`}>
-        <p>{error.message} سيعاد المحاولة تلقائيًا.</p>
+        <p>
+          {error.message}
+          {RETRYABLE_ERROR_KINDS.has(error.kind) ? " سيعاد المحاولة تلقائيًا." : ""}
+        </p>
       </Notice>
     );
   }
